@@ -1,10 +1,10 @@
 import socket
 import threading
-from crypto_utils import *
+from crypt_module import *
 
-server_sk, server_vk = generate_priuk()
-ec_server = init_ecdh(server_sk)
-server_pub_bytes = server_vk.to_string()
+server_priv_key, server_verif_key = generate_ecdsa()
+ec_server = generate_ecdh(server_priv_key)
+server_pub_bytes = server_verif_key.to_string()
 
 HOST = '0.0.0.0'
 PORT = 5000
@@ -20,7 +20,7 @@ def handle_client(conn, addr):
         client_pub_bytes = conn.recv(1024)
         username = conn.recv(1024).decode().strip()
         # Set up ECDH with this client
-        ecdh = init_ecdh(server_sk)
+        ecdh = generate_ecdh(server_priv_key)
         des_key = derive_shared_key(ecdh, client_pub_bytes, username)
 
         clients[conn] = {
@@ -67,7 +67,7 @@ def broadcast_message(encrypted_msg, sender):
     # Relay message as server
     server_msg = message
     server_hash = hash_message(server_msg)
-    server_signature = sign_hash(server_sk, server_hash)
+    server_signature = signing(server_priv_key, server_hash)
     payload = server_signature + server_hash + server_msg
 
     for conn, info in clients.items():
