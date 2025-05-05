@@ -15,7 +15,7 @@ server.py and crypto_utils.py on same folder
 - Import module ecdsa, pycryptodome (pip install ecdsa pycryptodome)
 
 ## How to Run:
-run on the server or client using the same method.
+Run on the server or client using the same method.
 
 Server terminal:
 > python3 server.py
