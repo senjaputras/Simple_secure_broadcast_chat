@@ -53,7 +53,7 @@ def send_messages(sock):
             break
         full_message = f"{username}: {msg}".encode()
         msg_hash = hash_message(full_message)
-        signature = sign_hash(client_priv_key, msg_hash)
+        signature = signing(client_priv_key, msg_hash)
         payload = signature + msg_hash + full_message
         print ("\nmessage hash:")
         print (msg_hash)
