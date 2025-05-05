@@ -10,7 +10,7 @@ ecdh = init_ecdh(client_sk)
 client_pub_bytes = client_vk.to_string()
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(('147.93.107.122', 5000))
+s.connect(('ServerIPAddress', 5000)) #Change ServerIPAddress, to IPv4 your server
 
 s.sendall(client_pub_bytes)
 print("[✓] Send client pub key to server")
