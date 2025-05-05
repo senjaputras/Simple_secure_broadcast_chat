@@ -3,20 +3,20 @@ from Crypto.Hash import SHA256
 from ecdsa import SigningKey, VerifyingKey, SECP256k1, ECDH
 
 
-def generate_keys():
-    sk = SigningKey.generate(curve=SECP256k1)
-    vk = sk.get_verifying_key()
-    return sk, vk
+def generate_ecdsa():
+    priv_key = SigningKey.generate(curve=SECP256k1)
+    verif_key = priv_key.get_verifying_key()
+    return priv_key, verif_key
 
 
-def init_ecdh(sk):
+def generate_ecdh(priv_key):
     ecdh = ECDH(curve=SECP256k1)
-    ecdh.load_private_key(sk)
+    ecdh.load_private_key(priv_key)
     return ecdh
 
 
-def derive_shared_key(ecdh, peer_public_bytes, identity):
-    ecdh.load_received_public_key_bytes(peer_public_bytes)
+def derive_shared_key(ecdh, client_public_bytes, identity):
+    ecdh.load_received_public_key_bytes(client_public_bytes)
     shared_secret = ecdh.generate_sharedsecret_bytes()
     return SHA256.new(shared_secret + identity.encode()).digest()[:8]  # DES key = 8 bytes
 
@@ -25,13 +25,13 @@ def hash_message(message):
     return SHA256.new(message).digest()
 
 
-def sign_hash(sk, msg_hash):
-    return sk.sign(msg_hash)
+def signing(priv_key, msg):
+    return priv_key.sign(msg)
 
 
-def verify_signature(public_bytes, signature, msg_hash):
-    vk = VerifyingKey.from_string(public_bytes, curve=SECP256k1)
-    return vk.verify(signature, msg_hash)
+def verify_signature(public_bytes, signature, msg):
+    verif_key = VerifyingKey.from_string(public_bytes, curve=SECP256k1)
+    return verif_key.verify(signature, msg)
 
 
 def des_encrypt(key, data):
