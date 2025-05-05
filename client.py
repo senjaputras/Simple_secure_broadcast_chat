@@ -1,19 +1,22 @@
 import socket
 import threading
-from crypto_utils import *
+from crypt_module import *
 
 username = input("Enter your username: ").strip()
 
 # Keys and ECDH setup
-client_sk, client_vk = generate_keys()
-ecdh = init_ecdh(client_sk)
-client_pub_bytes = client_vk.to_string()
+client_priv_key, client_verif_key = generate_ecdsa()
+ecdh = generate_ecdh(client_priv_key)
+client_pub_bytes = client_verif_key.to_string()
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(('ServerIPAddress', 5000)) #Change ServerIPAddress, to IPv4 your server
+s.connect(('{ServerIPAddress', 5000)) #Change to your Server IP Address
 
 s.sendall(client_pub_bytes)
 print("[✓] Send client pub key to server")
+print ("key raw")
+print (client_verif_key)
+print ("key string/byte")
 print (client_pub_bytes)
 s.sendall(username.encode())
 
@@ -50,7 +53,7 @@ def send_messages(sock):
             break
         full_message = f"{username}: {msg}".encode()
         msg_hash = hash_message(full_message)
-        signature = sign_hash(client_sk, msg_hash)
+        signature = sign_hash(client_priv_key, msg_hash)
         payload = signature + msg_hash + full_message
         print ("\nmessage hash:")
         print (msg_hash)
@@ -64,4 +67,6 @@ def send_messages(sock):
 
 threading.Thread(target=recv_msg, args=(s,), daemon=True).start()
 send_messages(s)
+
+
 
