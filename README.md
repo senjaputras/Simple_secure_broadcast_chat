@@ -1,4 +1,4 @@
-# Simple_secure_broadcast_chat
+# Simple secure broadcast chat
 This is script python to create Private Secure Broadcast Chat. We can broadcast to all connected user/client, but server will decrypt and check integrity of messsage and user. 
 Only member/people who know this algorithm (ECDH SECO256k1, SHA256, DES) can join and broadcast chat. You can custom the algorithm to make your own secure chat.
 
